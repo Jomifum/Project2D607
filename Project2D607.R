@@ -1,27 +1,31 @@
+---
+title: "Project 2"
+author: "Jose Fuentes"
+date: "2024-10-27"
+output:
+  pdf_document: default
+  html_document: default
+---
 
-#title: "Project 2"
-#author: "Jose Fuentes"
-#date: "2024-10-14"
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
+## Project 2 DATA 607: Preparing Dataset for Analysis
 
-## Project 2 DATA 607: Analysis of HIV/AIDS Diagnoses by Neighborhood, Sex, and Race/Ethnicity in NYC
-
-#Introduction
-#This is the analysis of dataset on HIV and AIds diagnoses in New York City, covering 2010 to 2021
-#that reveals critical trends and insights showing key years peaks and fluctuations, 
-#the data provides valuable context for understanding the impact of HIV across different communities, 
-#how this virus affects more neighborhoods than other, sex gender, races.
-  
-
+```{r libraries}
 # Load necessary libraries
 library(dplyr)
 library(tidyr)
 library(readr)
+library(viridis)
+```
 
 
+#Defining file path and steps to tidy the first dataset
 
-#Defining file path and steps to tidy the dataset
-
+#First Dataset: HIV Dataset in NYC
+```{r tidying-data1}
 # Define file path
 file_path <- "C:/Users/Dell/Downloads/HIV_AIDS_Diagnoses_20241014.csv"
 
@@ -97,11 +101,11 @@ print(data)
 
 # Optional: Write the cleaned data to a new CSV file
 write_csv(data, "C:/Users/Dell/Downloads/Tidy_HIV_AIDS_Diagnoses_20241014.csv")
-
+```
 
 ## Including Plots
-#1)HIV Diagnosis Rates by Gender and Race/Ethnicity 
-
+**1)HIV Diagnosis Rates by Gender and Race/Ethnicity **
+```{r hiv-diagnosis}
 # Load necessary libraries
 library(dplyr)
 library(ggplot2)
@@ -121,11 +125,11 @@ ggplot(hiv_by_gender_race, aes(x = Sex, y = average_rate, fill = Race_Ethnicity)
        y = "Average HIV Diagnosis Rate per 100,000",
        x = "Gender") +
   theme_minimal()
+```
 
+**Temporal Trends: Number of HIV and AIDS Diagnoses Over the Years**
 
-#**Temporal Trends: Number of HIV and AIDS Diagnoses Over the Years**
-  
-  
+```{r temporal-trends}
 hiv_aids_trends <- dataset %>%
   group_by(Year) %>%
   summarise(total_hiv_diagnoses = sum(`Total_HIV_Diagnoses`, na.rm = TRUE),
@@ -140,9 +144,10 @@ ggplot(hiv_aids_trends, aes(x = Year)) +
        x = "Year") +
   scale_color_manual(name = "Diagnosis Type", values = c("HIV Diagnoses" = "blue", "AIDS Diagnoses" = "red")) +
   theme_minimal()
+```
 
-#**Year with most HIV diagnoses**
-
+**Year with most HIV diagnoses**
+```{r top-year}
 # Calculate the total HIV diagnoses per year
 hiv_by_year <- dataset %>%
   group_by(Year) %>%
@@ -153,9 +158,10 @@ year_most_hiv <- hiv_by_year %>%
   filter(total_hiv_diagnoses == max(total_hiv_diagnoses))
 
 year_most_hiv
+```
 
-#**HIV Diagnoses by Neighborhood (Percentage)**
-
+**HIV Diagnoses by Neighborhood (Percentage)**
+```{r diagnosis-neighborhood}
 # Create a summary of HIV diagnoses by neighborhood
 hiv_by_neighborhood <- dataset %>%
   group_by(Neighborhood) %>%
@@ -173,10 +179,10 @@ ggplot(hiv_by_neighborhood, aes(x = reorder(Neighborhood, -percentage), y = perc
        x = "Neighborhood",
        y = "Percentage of Total HIV Diagnoses") +
   theme_minimal()
+```
 
-
-#**Geographical Patterns: HIV/AIDS Diagnoses by Neighborhood**
-  
+**Geographical Patterns: HIV/AIDS Diagnoses by Neighborhood**
+```{r geo-patterns}
 # Summarize HIV and AIDS Diagnoses by Neighborhood
 hiv_by_neighborhood <- dataset %>%
   group_by(Neighborhood) %>%
@@ -193,9 +199,10 @@ ggplot(hiv_by_neighborhood, aes(x = reorder(Neighborhood, total_hiv_diagnoses), 
        y = "Total HIV Diagnoses",
        x = "Neighborhood") +
   theme_minimal()
+```
 
-#**Intersectional Analysis: HIV Diagnoses by Gender and Race/Ethnicity**
- 
+**Intersectional Analysis: HIV Diagnoses by Gender and Race/Ethnicity**
+```{r intersectional}
 # Intersectional Analysis by Gender and Race/Ethnicity
 intersectional_analysis <- dataset %>%
   group_by(Sex, `Race_Ethnicity`) %>%
@@ -208,9 +215,9 @@ ggplot(intersectional_analysis, aes(x = Sex, y = total_hiv_diagnoses, fill = `Ra
        y = "Total HIV Diagnoses",
        x = "Gender") +
   theme_minimal()
-
-#**Relation newly HIV and Aids diagnosis**
-  
+```
+**Relation newly HIV and Aids diagnosis**
+```{r relation}
 # Summarize the total number of HIV and AIDS diagnoses for the pie chart
 diagnosis_summary <- dataset %>%
   summarise(
@@ -227,18 +234,256 @@ ggplot(diagnosis_summary, aes(x = "", y = Count, fill = Diagnosis)) +
   theme_minimal() +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank())
 
-# Statistics Summary:
+```
 
+# Statistics Summary:
+```{r statistics}
 # Get a statistical summary of all numeric columns in the dataset
 summary(dataset)
 
+```
 
-#**Interpreting the summary this dataset reveals significant variability in HIV and AIDS diagnoses across different neighborhoods. Many areas report no diagnoses  looking both total and per 100,000 population, with the median values indicating that over half the neighborhoods have very low diagnosis rates. However, the mean values are higher, suggesting some neighborhoods experience disproportionately high diagnoses, skewing the data. Now regarding concurrent HIV/AIDS diagnoses are rare, with most neighborhoods reporting none. Notably, the dataset contains missing values, particularly in the proportions of concurrent diagnoses, this suggests varying levels of impact across regions, with certain areas facing more significant health challenges than others.**
-  
-  #Conclusion
-#**The dataset on HIV diagnoses in New York City, spanning from 2010 to 2021, highlights significant
-#* trends. Key years include a peak of over 35,136 diagnoses in 2020, with the earliest data 
-#* from 2010, a median year of 2017, and the most recent in 2021. With 12,256 entries, the dataset 
-#* encompasses categorical variables like Borough, Neighborhood, Sex, and Ethnicity. This comprehensive 
-#* data aids in analyzing trends, showing that the most affected population is cisgender males, 
-#* although their sexual orientation is unknown due to the absence of this attribute in the dataset. This information can help inform and create better HIV prevention programs such as PrEP and improve understanding of the spread and impact of HIV across different communities. It emphasizes the importance of adherence to antiretroviral therapy to prevent further infections, offering valuable insights for public health strategies. Another challenge in the analysis was the lack of differentiation between neighborhoods and their respective counties in the initial dataset.**
+##Loading and preparing second dataset: Drinking water quality
+
+```{r data2}
+# Load necessary libraries
+library(tidyverse)
+
+# Define the URL of the CSV file
+url <- "https://github.com/Jomifum/Project2D607/blob/main/Drinking_Water_Quality_Distribution_Monitoring_Data_20241016.csv?raw=true"
+
+# Read the data from the URL
+data <- read_csv(url)
+
+# View the column names and first few rows to check for any issues
+print(colnames(data))
+print(head(data))
+
+# Check for missing values
+missing_values <- sapply(data, function(x) sum(is.na(x)))
+print(missing_values)
+
+```
+
+#Tyding the dataset 2:
+```{r tyding-data2}
+# Load necessary libraries
+library(tidyverse)
+
+# Define the URL of the CSV file
+url <- "https://github.com/Jomifum/Project2D607/blob/main/Drinking_Water_Quality_Distribution_Monitoring_Data_20241016.csv?raw=true"
+
+# Read the data from the URL
+data <- read_csv(url, col_types = cols(
+  `Sample Number` = col_double(),
+  `Sample Date` = col_character(),
+  `Sample Time` = col_character(),
+  `Sample Site` = col_character(),
+  `Sample class` = col_character(),
+  `Residual Free Chlorine (mg/L)` = col_double(),
+  `Turbidity (NTU)` = col_character(),
+  `Fluoride (mg/L)` = col_double(),
+  `Coliform (Quanti-Tray) (MPN /100mL)` = col_character(),
+  `E.coli(Quanti-Tray) (MPN/100mL)` = col_character()
+))
+
+# Handling missing values
+data <- data %>%
+  mutate(
+    `Sample Site` = ifelse(is.na(`Sample Site`), "Unknown", `Sample Site`),
+    `Residual Free Chlorine (mg/L)` = ifelse(is.na(`Residual Free Chlorine (mg/L)`), median(data$`Residual Free Chlorine (mg/L)`, na.rm = TRUE), `Residual Free Chlorine (mg/L)`),
+    `Turbidity (NTU)` = ifelse(is.na(`Turbidity (NTU)`), "Unknown", `Turbidity (NTU)`),
+    `Fluoride (mg/L)` = ifelse(is.na(`Fluoride (mg/L)`), median(data$`Fluoride (mg/L)`, na.rm = TRUE), `Fluoride (mg/L)`),
+    `Coliform (Quanti-Tray) (MPN /100mL)` = ifelse(is.na(`Coliform (Quanti-Tray) (MPN /100mL)`), "Unknown", `Coliform (Quanti-Tray) (MPN /100mL)`),
+    `E.coli(Quanti-Tray) (MPN/100mL)` = ifelse(is.na(`E.coli(Quanti-Tray) (MPN/100mL)`), "Unknown", `E.coli(Quanti-Tray) (MPN/100mL)`)
+  )
+
+# Check the tidied data
+print(head(data))
+
+# Check for missing values again
+missing_values <- sapply(data, function(x) sum(is.na(x)))
+print(missing_values)
+
+# Save the tidied data to a CSV file
+write_csv(data, "tidied_data2.csv")
+
+
+```
+
+#Statistics: 
+```{r statistics-data2}
+library(tidyverse)
+
+# Read the data from the URL
+url <- "https://github.com/Jomifum/Project2D607/blob/main/Drinking_Water_Quality_Distribution_Monitoring_Data_20241016.csv?raw=true"
+data <- read_csv(url)
+
+# Handle missing values as previously described
+data <- data %>%
+  mutate(
+    `Sample Site` = ifelse(is.na(`Sample Site`), "Unknown", `Sample Site`),
+    `Residual Free Chlorine (mg/L)` = ifelse(is.na(`Residual Free Chlorine (mg/L)`), median(data$`Residual Free Chlorine (mg/L)`, na.rm = TRUE), `Residual Free Chlorine (mg/L)`),
+    `Turbidity (NTU)` = ifelse(is.na(`Turbidity (NTU)`), "Unknown", `Turbidity (NTU)`),
+    `Fluoride (mg/L)` = ifelse(is.na(`Fluoride (mg/L)`), median(data$`Fluoride (mg/L)`, na.rm = TRUE), `Fluoride (mg/L)`),
+    `Coliform (Quanti-Tray) (MPN /100mL)` = ifelse(is.na(`Coliform (Quanti-Tray) (MPN /100mL)`), "Unknown", `Coliform (Quanti-Tray) (MPN /100mL)`),
+    `E.coli(Quanti-Tray) (MPN/100mL)` = ifelse(is.na(`E.coli(Quanti-Tray) (MPN/100mL)`), "Unknown", `E.coli(Quanti-Tray) (MPN/100mL)`)
+  )
+
+# Summary statistics
+summary_stats <- data %>% 
+  summarise(
+    min_chlorine = min(`Residual Free Chlorine (mg/L)`, na.rm = TRUE),
+    max_chlorine = max(`Residual Free Chlorine (mg/L)`, na.rm = TRUE),
+    mean_chlorine = mean(`Residual Free Chlorine (mg/L)`, na.rm = TRUE),
+    min_turbidity = min(as.numeric(`Turbidity (NTU)`), na.rm = TRUE),
+    max_turbidity = max(as.numeric(`Turbidity (NTU)`), na.rm = TRUE),
+    mean_turbidity = mean(as.numeric(`Turbidity (NTU)`), na.rm = TRUE)
+  )
+
+print(summary_stats)
+
+```
+
+
+## Including Plots
+```{r visuals-data2}
+#Residual free chlorine:
+ggplot(data, aes(x = `Residual Free Chlorine (mg/L)`)) +
+  geom_histogram(binwidth = 0.1, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Residual Free Chlorine", x = "Residual Free Chlorine (mg/L)", y = "Frequency")
+
+#Turbidity distribution:
+ggplot(data, aes(x = as.numeric(`Turbidity (NTU)`))) +
+  geom_histogram(binwidth = 0.1, fill = "green", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Turbidity", x = "Turbidity (NTU)", y = "Frequency")
+
+#Residual free chlorine versus Turbidity
+ggplot(data, aes(x = `Residual Free Chlorine (mg/L)`, y = as.numeric(`Turbidity (NTU)`))) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Residual Free Chlorine vs. Turbidity", x = "Residual Free Chlorine (mg/L)", y = "Turbidity (NTU)")
+
+```
+
+#Analysis: The chlorine levels in water samples show a typical range with some higher or lower concentrations, while turbidity levels, revealing water clarity, exhibit a similar common range but with some outliers. The scatter plot comparing chlorine to turbidity hints at possible correlations, like higher chlorine corresponding with lower turbidity. Chlorine levels' mean, minimum, and maximum illustrate average concentration and range, and turbidity statistics provide parallel insights into water clarity and quality. This data offers a comprehensive understanding of water quality indicators.
+
+##Dataset 3: Leading Causes of death in NYC
+```{r dataset3}
+# Load necessary libraries
+library(tidyverse)
+
+# Define the URL of the CSV file
+url <- "https://github.com/Jomifum/Project2D607/blob/main/New_York_City_Leading_Causes_of_Death_20241016.csv?raw=true"
+
+# Read the data from the URL and rename it as dataset3
+dataset3 <- read_csv(url)
+
+# View the first few rows of the renamed dataset
+print(head(dataset3))
+
+```
+
+
+```{r tyding-dataset3}
+# Load necessary libraries
+library(tidyverse)
+
+# Define the URL of the CSV file
+url <- "https://github.com/Jomifum/Project2D607/blob/main/New_York_City_Leading_Causes_of_Death_20241016.csv?raw=true"
+
+# Read the data from the URL
+dataset3 <- read_csv(url, col_types = cols(
+  `Year` = col_double(),
+  `Leading Cause` = col_character(),
+  `Sex` = col_character(),
+  `Race Ethnicity` = col_character(),
+  `Deaths` = col_double(),
+  `Death Rate` = col_double(),
+  `Age Adjusted Death Rate` = col_double()
+))
+
+# Tidy the dataset
+dataset3 <- dataset3 %>%
+  mutate(
+    `Death Rate` = as.numeric(`Death Rate`),
+    `Age Adjusted Death Rate` = as.numeric(`Age Adjusted Death Rate`)
+  ) %>%
+  drop_na() %>%
+  rename(
+    Year = `Year`,
+    Leading_Cause = `Leading Cause`,
+    Sex = `Sex`,
+    Race_Ethnicity = `Race Ethnicity`,
+    Deaths = `Deaths`,
+    Death_Rate = `Death Rate`,
+    Age_Adjusted_Death_Rate = `Age Adjusted Death Rate`
+  ) %>%
+  # Separate Race and Ethnicity, ensuring Hispanic is an Ethnicity with Race as Other
+  separate(`Race_Ethnicity`, into = c("Race", "Ethnicity"), sep = " ", extra = "merge", fill = "right") %>%
+  mutate(
+    Ethnicity = ifelse(Race == "Hispanic", "Hispanic", Ethnicity),
+    Race = ifelse(Race == "Hispanic", "Other", Race),
+    Ethnicity = ifelse(Race == "Asian" & Ethnicity == "and Pacific Islander", "Asian and Pacific Islander", Ethnicity),
+    Race = ifelse(Race == "Asian" & Ethnicity == "Asian and Pacific Islander", "Asian", Race)
+  )
+
+# Print the tidied data
+print(head(dataset3))
+
+# Save the tidied data to a CSV file
+write_csv(dataset3, "tidied_data3.csv")
+
+```
+
+#Visualizations for the third dataset
+```{r visuals dataset3}
+
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(viridis)
+
+# Top 10 leading causes of death - Bar Chart
+top_causes <- dataset3 %>%
+  group_by(Leading_Cause) %>%
+  summarise(Total_Deaths = sum(Deaths), .groups = "drop") %>%
+  arrange(desc(Total_Deaths)) %>%
+  head(10)
+
+# Plot
+ggplot(top_causes, aes(x = reorder(Leading_Cause, Total_Deaths), y = Total_Deaths, fill = Leading_Cause)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Top 10 Leading Causes of Deaths", x = "Leading Cause", y = "Total Deaths") +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 10), # Increase y-axis text size
+    axis.text.x = element_text(size = 10), # Increase x-axis text size
+    plot.title = element_text(size = 14)   # Increase title size
+  ) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 30)) +
+  scale_fill_viridis_d() # Use the viridis color palette for better color handling
+
+
+# Leading causes of death by race - Dodge Bar Chart
+library(stringr)
+
+# Wrapping labels and adjusting text size
+causes_by_race <- dataset3 %>%
+  group_by(Race, Leading_Cause) %>%
+  summarise(Total_Deaths = sum(Deaths), .groups = "drop") %>%
+  arrange(desc(Total_Deaths))
+
+ggplot(causes_by_race, aes(x = reorder(Leading_Cause, Total_Deaths), y = Total_Deaths, fill = Race)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() +
+  labs(title = "Leading Causes of Death by Race", x = "Leading Cause", y = "Total Deaths") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 8),
+    plot.title = element_text(size = 14)
+  ) +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 30))
+
+```
